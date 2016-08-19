@@ -1,17 +1,31 @@
-#FROM codemix/yii2-base:2.0.9-php7-apache
-FROM codemix/yii2-base:2.0.9-php7-fpm
+FROM codemix/yii2-base:2.0.9-php7-apache
+#FROM codemix/yii2-base:2.0.9-php7-fpm
 #FROM codemix/yii2-base:2.0.9-hhvm
 
+RUN apt-get update && apt-get install -y libpq-dev
 
-RUN apt-get update \
-    && apt-get -y install \
-            php-xdebug \
-        --no-install-recommends \
+RUN docker-php-ext-install pdo_pgsql
 
-    # Install PHP extensions
-    && docker-php-ext-install pdo_pgsql \
+# Setup the Xdebug version to install
+ENV XDEBUG_VERSION 2.4.1
 
-RUN echo 'xdebug.show_error_trace = 1' >>> /etc/php/7.0/mods-available/xdebug.ini
+# Install Xdebug
+RUN set -x \
+	&& curl -SL "http://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz \
+	&& mkdir -p /usr/src/xdebug \
+	&& tar -xf xdebug.tgz -C /usr/src/xdebug --strip-components=1 \
+	&& rm xdebug.* \
+	&& cd /usr/src/xdebug \
+	&& phpize \
+	&& ./configure --enable-xdebug \
+	&& make \
+        && mv modules/xdebug.so /usr/lib/ \
+        && echo 'zend_extension="/usr/lib/xdebug.so"' > /usr/local/etc/php/conf.d/xdebug.ini
+
+
+
+# COPY xdebug.ini /usr/local/etc/php/conf.d/
+
 
 # Composer packages are installed first. This will only add packages
 # that are not already in the yii2-base image.

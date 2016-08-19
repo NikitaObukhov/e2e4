@@ -21,13 +21,12 @@
 		"yiisoft/yii2-faker": "~2.0.0"
 	},
 	"config": {
-		"process-timeout": 1800,
-		"vendor-dir": "/var/www/vendor"
+		"process-timeout": 1800
 	},
 	"extra": {
 		"asset-installer-paths": {
-			"npm-asset-library": "/var/www/vendor/npm",
-			"bower-asset-library": "/var/www/vendor/bower"
+			"npm-asset-library": "/var/www/html/vendor/npm",
+			"bower-asset-library": "/var/www/html/vendor/bower"
 		}
 	}
 }

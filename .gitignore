@@ -6,3 +6,5 @@ config/console-local.php
 
 *.swp
 .vimrc
+
+.idea

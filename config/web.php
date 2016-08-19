@@ -2,7 +2,7 @@
 $config = [
     'id' => 'basic',
     'basePath' => '/var/www/html',
-    'vendorPath' => '/var/www/vendor',
+    'vendorPath' => '/var/www/html/vendor',
     'components' => [
         'cache' => [
             'class' => 'yii\caching\ApcCache',
@@ -14,7 +14,7 @@ $config = [
             'username' => \DockerEnv::dbUser(),
             'password' => \DockerEnv::dbPassword(),
             'charset' => 'utf8',
-            'tablePrefix' => '',
+            'tablePrefix' => 'e2e4_',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -47,6 +47,9 @@ $config = [
         ],
         'request' => [
             'cookieValidationKey' => \DockerEnv::get('COOKIE_VALIDATION_KEY', null, !YII_ENV_TEST),
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -57,8 +60,15 @@ $config = [
             'enableAutoLogin' => true,
         ],
     ],
+    'modules' => [
+        'gii' => [
+            'class' => 'yii\gii\Module',
+        ],
+    ],
+    'bootstrap' => ['gii'],
     'params' => require('/var/www/html/config/params.php'),
 ];
+
 
 if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';

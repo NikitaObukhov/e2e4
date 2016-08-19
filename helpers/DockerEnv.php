@@ -10,18 +10,18 @@ use yii\helpers\ArrayHelper;
 class DockerEnv
 {
     const APP_DIR = '/var/www/html/';
-    const VENDOR_DIR = '/var/www/vendor/';
+    const VENDOR_DIR = '/var/www/html/vendor/';
 
-    const TEST_DB_DSN = 'mysql:host=testdb;dbname=test';
-    const TEST_DB_USER = 'test';
-    const TEST_DB_PASSWORD = 'test';
+    const TEST_DB_DSN = 'pgsql:host=db;dbname=e2e4';
+    const TEST_DB_USER = 'e2e4';
+    const TEST_DB_PASSWORD = '123';
 
     /**
      * Initialize main environment vars and load Yii 2
      */
     public static function init()
     {
-        require('/var/www/vendor/autoload.php');
+        require('/var/www/html/vendor/autoload.php');
 
         // Load .env file if enabled and if it exists
         if (getenv('ENABLE_ENV_FILE') && file_exists(self::APP_DIR.'.env')) {
@@ -119,7 +119,7 @@ class DockerEnv
      * @param string $dsn the dsn to return if no env var is set and not in testing mode. Default is 'mysql:host=db;dbname=web'.
      * @return string the DB  dsn for the current environment
      */
-    public static function dbDsn($dsn = 'mysql:host=db;dbname=web')
+    public static function dbDsn($dsn = 'pgsql:host=db;dbname=e2e4')
     {
         return self::get('DB_DSN', YII_ENV_TEST ? self::TEST_DB_DSN : $dsn);
     }
