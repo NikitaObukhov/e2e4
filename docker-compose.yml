@@ -10,16 +10,16 @@ services:
         environment:
             ENABLE_ENV_FILE: 1
             ENABLE_LOCALCONF: 1
-            API_TOKEN: "<YOUR GITHUB API TOKEN>"
+            API_TOKEN: "b02023acdb0f09bc82499348ee081afb2885ca8e"
 
 
         # For Apache based image:
-        ports:
-            - "8080:80"
+        #ports:
+        #    - "8080:80"
 
         # For FPM/HHVM based image:
-        #expose:
-        #    - "9000"
+        expose:
+            - "9000"
 
         # Autostart at boottime
         #restart: always
@@ -42,16 +42,10 @@ services:
     #        - web
 
     db:
-        image: mysql:5.6
-        ports:
-            - "3306:3306"
-        expose:
-            - "3306"
+        image: postgres:5.6
         environment:
-            MYSQL_ROOT_PASSWORD: secret-root
-            MYSQL_DATABASE: web
-            MYSQL_USER: web
-            MYSQL_PASSWORD: web
+            POSTGRES_USER: e2e4
+            POSTGRES_PASSWORD: 123
 
         # Autostart at boottime
         #restart: always

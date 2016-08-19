@@ -1,7 +1,17 @@
-FROM codemix/yii2-base:2.0.9-php7-apache
-#FROM codemix/yii2-base:2.0.9-php7-fpm
+#FROM codemix/yii2-base:2.0.9-php7-apache
+FROM codemix/yii2-base:2.0.9-php7-fpm
 #FROM codemix/yii2-base:2.0.9-hhvm
 
+
+RUN apt-get update \
+    && apt-get -y install \
+            php-xdebug \
+        --no-install-recommends \
+
+    # Install PHP extensions
+    && docker-php-ext-install pdo_pgsql \
+
+RUN echo 'xdebug.show_error_trace = 1' >>> /etc/php/7.0/mods-available/xdebug.ini
 
 # Composer packages are installed first. This will only add packages
 # that are not already in the yii2-base image.
