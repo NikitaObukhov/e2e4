@@ -11,15 +11,20 @@ services:
             ENABLE_ENV_FILE: 1
             ENABLE_LOCALCONF: 1
             API_TOKEN: "b02023acdb0f09bc82499348ee081afb2885ca8e"
+            COOKIE_VALIDATION_KEY: "123"
+            YII_ENV: "dev"
+            YII_DEBUG: 'on'
+            DB_USER: e2e4
+            DB_PASSWORD: 123
 
 
         # For Apache based image:
-        #ports:
-        #    - "8080:80"
+        ports:
+            - "8080:80"
 
         # For FPM/HHVM based image:
-        expose:
-            - "9000"
+        #expose:
+        #    - "9000"
 
         # Autostart at boottime
         #restart: always
@@ -42,7 +47,9 @@ services:
     #        - web
 
     db:
-        image: postgres:5.6
+        image: postgres:latest
+        ports:
+             - "5432:5432"
         environment:
             POSTGRES_USER: e2e4
             POSTGRES_PASSWORD: 123
