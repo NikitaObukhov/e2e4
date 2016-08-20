@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\models\queries;
 
 /**
  * This is the ActiveQuery class for [[PageContent]].

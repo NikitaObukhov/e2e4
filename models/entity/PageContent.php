@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\models\entity;
 
 use Yii;
 
@@ -10,9 +10,10 @@ use Yii;
  * @property integer $page_content_id
  * @property integer $page_id
  * @property string $type
+ * @property string $hash
  * @property resource $data
  */
-class PageContent extends \yii\db\ActiveRecord
+abstract class PageContent extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -28,9 +29,9 @@ class PageContent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['page_content_id', 'page_id', 'type', 'data'], 'required'],
+            [['page_content_id', 'page_id', 'type', 'hash', 'data'], 'required'],
             [['page_content_id', 'page_id'], 'integer'],
-            [['type', 'data'], 'string'],
+            [['type', 'data', 'hash'], 'string'],
         ];
     }
 
@@ -43,6 +44,7 @@ class PageContent extends \yii\db\ActiveRecord
             'page_content_id' => 'Page Content ID',
             'page_id' => 'Page ID',
             'type' => 'Type',
+            'hash' => 'Hash',
             'data' => 'Data',
         ];
     }
@@ -54,5 +56,12 @@ class PageContent extends \yii\db\ActiveRecord
     public static function find()
     {
         return new PageContentQuery(get_called_class());
+    }
+
+    abstract public function getContent();
+
+    public function createHash()
+    {
+        return sha1(serialize($this->data));
     }
 }

@@ -1,4 +1,8 @@
 <?php
+
+
+require __DIR__ . '/container.php';
+
 $config = [
     'id' => 'basic',
     'basePath' => '/var/www/html',
