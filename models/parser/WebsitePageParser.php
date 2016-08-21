@@ -2,6 +2,7 @@
 
 namespace app\models\parser;
 
+use app\models\entity\WebsitePage;
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -15,12 +16,12 @@ class WebsitePageParser implements ParserInterface
 
     protected $client;
 
-    protected $url;
+    protected $websitePage;
 
-    public function __construct(Client $client, $url = null, $parsers = [])
+    public function __construct(Client $client, WebsitePage $websitePage = null, $parsers = [])
     {
         $this->client = $client;
-        $this->url = $url;
+        $this->websitePage = $websitePage;
         foreach($parsers as $parser)
         {
             $this->addParser($parser);
@@ -32,27 +33,27 @@ class WebsitePageParser implements ParserInterface
         $this->parsers[] = $parser;
     }
 
-    public function getParser()
+    public function getParsers()
     {
         return $this->parsers;
     }
 
     /**
-     * @return null
+     * @return WebsitePage
      */
-    public function getUrl()
+    public function getWebsitePage()
     {
-        return $this->url;
+        return $this->websitePage;
     }
 
     /**
-     * @param null $url
+     * @param WebsitePage $websitePage
      */
-    public function setUrl($url)
+    public function setWebsitePage($websitePage)
     {
-        $this->url = $url;
+        $this->websitePage = $websitePage;
     }
-    
+
     public function doRequestAndParse()
     {
 
@@ -60,13 +61,15 @@ class WebsitePageParser implements ParserInterface
         return $this->doParse($response);
     }
 
-    public function doRequest()
+    public function doRequest($ssl = false)
     {
-        $dom = $this->client->request('GET', $this->getUrl());
+        $uri = $this->getWebsitePage()->getUri($ssl ? 'https' : 'http');
+        $dom = $this->client->request('GET', $uri);
         $response = $this->client->getResponse();
         /* @var $response \Symfony\Component\BrowserKit\Response */
         if (200 !== $status = $response->getStatus()) {
-            throw new \RuntimeException(sprintf('Request to %s failed: %d (%s)', $this->url, $status, $response->getContent()));
+            throw new \RuntimeException(sprintf('Request to %s failed: %d (%s)', $uri, $status, $response->getContent
+            ()));
         }
         return $dom;
     }

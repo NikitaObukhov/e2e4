@@ -9,10 +9,16 @@ namespace app\models\queries;
  */
 class PageContentQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+
+    public $type;
+
+    public function prepare($builder)
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        if (null !== $this->type) {
+            $this->andWhere(['type' => $this->type]);
+        }
+        return parent::prepare($builder);
+    }
 
     /**
      * @inheritdoc
@@ -30,5 +36,10 @@ class PageContentQuery extends \yii\db\ActiveQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+
+    public function byHashes(array $hashes)
+    {
+        return $this->andWhere(['hash' => $hashes])->indexBy('hash');
     }
 }

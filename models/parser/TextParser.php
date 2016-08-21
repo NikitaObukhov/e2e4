@@ -37,7 +37,7 @@ class TextParser implements ParserInterface
         $nodes = $dom->filterXPath($xpath);
         foreach($nodes as $node) {
             $content = new TextPageContent();
-            $content->data = $node->textContent;
+            $content->setData($node->textContent);
             yield $content;
         }
     }

@@ -28,7 +28,7 @@ class Website extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['website_id', 'domain'], 'required'],
+            [['domain'], 'required'],
             [['website_id'], 'integer'],
             [['domain'], 'string'],
             [['domain'], 'unique'],
@@ -52,5 +52,15 @@ class Website extends \yii\db\ActiveRecord
     public function getWebsitePages()
     {
         return $this->hasMany(WebsitePage::className(), ['website_id' => 'website_id']);
+    }
+
+    public function setDomain(string $domain)
+    {
+        $this->domain = $domain;
+    }
+
+    public function getDomain()
+    {
+        return $this->domain;
     }
 }

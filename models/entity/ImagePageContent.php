@@ -9,4 +9,9 @@ class ImagePageContent extends PageContent
     {
         // TODO: Implement getContent() method.
     }
+
+    public static function myType()
+    {
+        return 'image';
+    }
 }

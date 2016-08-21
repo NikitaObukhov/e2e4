@@ -13,7 +13,7 @@ class ImageParser implements ParserInterface
         $images = $dom->filterXpath('//img')->images();
         foreach($images as $image) {
             $content = new ImagePageContent();
-            $content->data = $image->getUri();
+            $content->setData($image->getUri());
             yield $content;
         }
     }

@@ -13,10 +13,10 @@ class LinkParser implements ParserInterface
         $links = $dom->filterXpath('//a')->links();
         foreach($links as $link) {
             $content = new LinkPageContent();
-            $content->data = array(
+            $content->setData([
                 'text' => $link->getNode()->textContent,
                 'uri' => $link->getUri(),
-            );
+            ]);
             yield $content;
         }
     }
