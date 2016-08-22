@@ -63,13 +63,29 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
+        'serializer' => [
+            'class' => 'krtv\yii2\serializer\Serializer',
+            'formats' => [
+                'json',
+                'xml',
+            ],
+            'metadata' => [
+                'cache' => false,
+                'directories' => [
+                    [
+                        'namespace' => 'app\\models\\entity',
+                        'alias' => '@app/config/serializer',
+                    ],
+                ]
+            ],
+        ],
     ],
     'modules' => [
         'gii' => [
             'class' => 'yii\gii\Module',
         ],
     ],
-    'bootstrap' => ['gii'],
+    'bootstrap' => ['gii', 'serializer', 'app\\models\\Bootstrap'],
     'params' => require('/var/www/html/config/params.php'),
 ];
 
