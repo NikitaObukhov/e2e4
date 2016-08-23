@@ -2,6 +2,7 @@
 
 namespace app\models\parser;
 
+use app\models\client\HttpRequestFailedException;
 use app\models\entity\WebsitePage;
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\DomCrawler\Crawler;
@@ -68,8 +69,7 @@ class WebsitePageParser implements ParserInterface
         $response = $this->client->getResponse();
         /* @var $response \Symfony\Component\BrowserKit\Response */
         if (200 !== $status = $response->getStatus()) {
-            throw new \RuntimeException(sprintf('Request to %s failed: %d (%s)', $uri, $status, $response->getContent
-            ()));
+            throw new HttpRequestFailedException($uri, $status);
         }
         return $dom;
     }

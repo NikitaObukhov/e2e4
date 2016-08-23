@@ -138,8 +138,17 @@ abstract class PageContent extends \yii\db\ActiveRecord
     public function getData()
     {
         if (null === $this->_data && $this->data) {
-            $this->_data = @unserialize($this->data) or $this->data;
+            if (is_resource($this->data)) {
+                $this->data = stream_get_contents($this->data);
+            }
+            try {
+                $this->_data = unserialize($this->data);
+            }
+            catch (\Exception $e) {
+                $this->_data = $this->data;
+            }
         }
+
         return $this->_data;
     }
 

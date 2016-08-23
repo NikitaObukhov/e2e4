@@ -7,7 +7,7 @@ use Doctrine\Common\Annotations\Annotation;
 /**
  * @Annotation
  */
-class Property extends Annotation
+class ARProperty extends Annotation
 {
 
 }

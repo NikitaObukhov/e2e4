@@ -117,11 +117,6 @@ class ParseUrlForm extends Model
             }
             Yii::$app->db->createCommand()->batchInsert(SearchResult::tableName(), [SearchRequest::scalarPrimaryKey()
                 , PageContent::scalarPrimaryKey()], $rows)->execute();
-            foreach($result as $pageContent) {
-                $searchResult = new SearchResult();
-             //   $searchResult->setPageContent($pageContent);
-              //  $searchRequest->addSearchResult($searchResult);
-            }
             $searchRequest->save();
             $transaction->commit();
         }

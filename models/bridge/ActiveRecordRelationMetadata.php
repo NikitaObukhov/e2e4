@@ -19,6 +19,8 @@ class ActiveRecordRelationMetadata extends PropertyMetadata
 
     public $propertyPath;
 
+    public $groups;
+
 
     public function __construct($class, $tableName)
     {

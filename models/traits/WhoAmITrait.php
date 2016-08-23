@@ -1,7 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nikita
- * Date: 22.08.16
- * Time: 11:45
- */
+
+namespace app\models\traits;
+
+trait WhoAmITrait
+{
+    public static function getClass()
+    {
+        return get_called_class();
+    }
+}
