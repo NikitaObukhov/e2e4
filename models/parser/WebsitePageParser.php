@@ -4,6 +4,7 @@ namespace app\models\parser;
 
 use app\models\client\HttpRequestFailedException;
 use app\models\entity\WebsitePage;
+use GuzzleHttp\Exception\ConnectException;
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\DomCrawler\Crawler;
 

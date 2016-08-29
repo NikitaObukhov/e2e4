@@ -2,6 +2,8 @@
 
 namespace app\models\bridge;
 
+use yii\web\Request;
+
 class ActiveRecordPropertyMetadataFactory
 {
 
@@ -9,10 +11,13 @@ class ActiveRecordPropertyMetadataFactory
     
     private $schemaProvider;
 
-    public function __construct(DBTypeToJMSCaster $caster, ClassSchemaProvider $schemaProvider)
+    private $request;
+
+    public function __construct(DBTypeToJMSCaster $caster, ClassSchemaProvider $schemaProvider, Request $request)
     {
         $this->caster = $caster;
         $this->schemaProvider = $schemaProvider;
+        $this->request = $request;
     }
 
     public function getMetadataForProperty($propertyName, $className)
@@ -31,5 +36,18 @@ class ActiveRecordPropertyMetadataFactory
         }
         $propertyMetadata->setAccessor(null, 'get'.$propertyName, 'set'.$propertyName);
         return $propertyMetadata;
+    }
+
+    public function getExpandedVirtualProperties($className)
+    {
+        $extra = $this->request->get('expand', '');
+        $reflection = new \ReflectionClass($className);
+        $properties = [];
+        foreach(explode(',', $extra) as $field) {
+            if ($reflection->hasMethod('get'.ucfirst($field))) {
+                $properties[] =new ActiveRecordVirtualPropertyMetadata($className, $field);
+            }
+        }
+        return $properties;
     }
 }

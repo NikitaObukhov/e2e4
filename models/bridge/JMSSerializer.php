@@ -10,16 +10,20 @@ use \krtv\yii2\serializer\Serializer as KRTVSerializer;
 class JMSSerializer extends Serializer
 {
 
+    /**
+     * @var \krtv\yii2\serializer\Serializer
+     */
     private $serializer;
 
     private $format;
 
     private $serializationContext;
 
-    public function __construct($config = [], $format = 'json', SerializationContext $serializationContext = null)
+    public function __construct($config = [], $format = 'json', RequestedFieldsAwareSerializationContext $serializationContext = null)
     {
         parent::__construct($config);
         $this->serializer = \Yii::$app->serializer;
+        $this->serializer->getInnerSerializer();
         $this->format = $format;
         $this->serializationContext = $serializationContext;
     }
@@ -38,24 +42,24 @@ class JMSSerializer extends Serializer
     }
 
     /**
-     * @return SerializationContext
+     * @return RequestedFieldsAwareSerializationContext
      */
     public function getSerializationContext()
     {
         return $this->serializationContext;
     }
 
-    /**
-     * @param SerializationContext $serializationContext
-     */
-    public function setSerializationContext($serializationContext)
+    public function setSerializationContext(RequestedFieldsAwareSerializationContext $serializationContext)
     {
         $this->serializationContext = $serializationContext;
     }
     
     public function serialize($data)
     {
-        return parent::serialize($data);
+        if (is_string($string = parent::serialize($data))) {
+            return $string;
+        }
+        return $this->serializer->serialize($data, $this->getFormat());
     }
 
     /**
@@ -68,12 +72,14 @@ class JMSSerializer extends Serializer
 
     public function serializeModel($model)
     {
+        $this->getSerializationContext()->setRequestedFields($this->getRequestedFields());
         return $this->serializer->serialize($model, $this->getFormat(), $this->getSerializationContext());
     }
     
     public function serializeModels(array $models)
     {
-        return $this->serializer->serialize($models, $this->getFormat(), $this->getSerializationContext());
+        $this->getSerializationContext()->setRequestedFields($this->getRequestedFields());
+        return $this->serializer->serialize(array_values($models), $this->getFormat(), $this->getSerializationContext());
     }
 
     public function serializeDataProvider($dataProvider)

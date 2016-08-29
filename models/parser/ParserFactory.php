@@ -2,7 +2,7 @@
 
 namespace app\models\parser;
 
-use app\models\forms\ParseUrlForm;
+use app\models\forms\SearchRequestForm;
 
 class ParserFactory
 {
@@ -12,7 +12,7 @@ class ParserFactory
         return \Yii::$container->get(sprintf('e2e4.parser.%s_parser', $type), $params);
     }
 
-    public function createParserWithFormParams($type, ParseUrlForm $form)
+    public function createParserWithFormParams($type, SearchRequestForm $form)
     {
         if ('text' === $type) {
             return $this->createParserWithParams($type, [$form->searchText]);

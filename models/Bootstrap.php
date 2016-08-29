@@ -47,6 +47,8 @@ class Bootstrap implements BootstrapInterface
                 new PhpDriver($locator),
             ]);
         });
-
+        $dispatcher = $container->get('serializer.event_dispatcher');
+        $dispatcher->addListener('serializer.pre_serialize',
+            ['app\\models\\bridge\\ActiveRecordSerializeListener', 'onPostSerialize']);
     }
 }

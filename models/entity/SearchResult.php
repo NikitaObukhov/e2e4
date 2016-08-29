@@ -75,4 +75,9 @@ class SearchResult extends \yii\db\ActiveRecord
     {
         $this->link('searchRequest', $searchRequest);
     }
+
+    public function extraFields()
+    {
+        return ['pageContent'];
+    }
 }

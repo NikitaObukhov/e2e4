@@ -37,6 +37,7 @@ class ActiveRecordPropertyMetadata extends PropertyMetadata
         if (method_exists($obj, $explicitGetter)) {
             return call_user_func([$obj, $explicitGetter]);
         }
+
         return $obj->{$this->name};
     }
 

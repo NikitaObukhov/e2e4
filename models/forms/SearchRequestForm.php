@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\validators\UrlValidator;
 use yii\validators\Validator;
 
-class ParseUrlForm extends Model
+class SearchRequestForm extends Model
 {
     public $url;
     public $parsers = array();
@@ -45,10 +45,10 @@ class ParseUrlForm extends Model
     {
         return [
             [['url', 'parsers'], 'required'],
-            ['searchText', 'required', 'when' => function(ParseUrlForm $form) {
+            ['searchText', 'required', 'when' => function(SearchRequestForm $form) {
                 return false !== array_search('text', $form->parsers);
             }],
-            ['searchText', 'validateSearchTextIsEmpty', 'when' => function(ParseUrlForm $form) {
+            ['searchText', 'validateSearchTextIsEmpty', 'when' => function(SearchRequestForm $form) {
                 return false === array_search('text', $form->parsers);
             }]
         ];
@@ -107,6 +107,9 @@ class ParseUrlForm extends Model
             $searchRequest->setType(implode(',', $this->parsers));
             $searchRequest->setCreatedAt(new \DateTime());
             $searchRequest->setWebsitePage($websitePage);
+            if ($this->searchText) {
+                $searchRequest->setData(['searchText' => $this->searchText]);
+            }
             $searchRequest->save();
             $rows = [];
             foreach($result as $pageContent) {
@@ -124,5 +127,6 @@ class ParseUrlForm extends Model
             $transaction->rollBack();
             throw $e;
         }
+        return $searchRequest;
     }
 }

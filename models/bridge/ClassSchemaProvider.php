@@ -2,6 +2,8 @@
 
 namespace app\models\bridge;
 
+use yii\db\Schema;
+
 class ClassSchemaProvider
 {
 
@@ -15,6 +17,10 @@ class ClassSchemaProvider
         $this->dbPrefix = $dbPrefix;
     }
 
+    /**
+     * @param $className
+     * @return Schema
+     */
     public function getSchemaForClass($className)
     {
         return call_user_func([$className, 'getTableSchema']);

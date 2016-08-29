@@ -12,6 +12,7 @@ use Yii;
  * @property string $created_at
  * @property integer $website_page_id
  * @property string $type
+ * @property resource $data
  *
  * @property WebsitePage $websitePage
  * @property SearchResult[] $searchResults
@@ -20,6 +21,20 @@ use Yii;
 class SearchRequest extends \yii\db\ActiveRecord
 {
     use ScalarPrimaryKeyTrait;
+
+    private $_data;
+
+    public static $typeNamesSingular = [
+        'link' => 'Ссылка',
+        'text' => 'Текст',
+        'image' => 'Картинка'
+    ];
+
+    public static $typeNamesPlural = [
+        'link' => 'Ссылки',
+        'text' => 'Текст',
+        'image' => 'Картинки'
+    ];
 
     /**
      * @inheritdoc
@@ -102,7 +117,6 @@ class SearchRequest extends \yii\db\ActiveRecord
 
     public function addSearchResult(SearchResult $searchResult)
     {
-        var_dump($searchResult->getPrimaryKey());
         $this->link('searchResult', $searchResult);
     }
 
@@ -114,5 +128,59 @@ class SearchRequest extends \yii\db\ActiveRecord
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    public function getSearchResultsCount()
+    {
+        return $this->getSearchResults()->count();
+    }
+
+    public function getData()
+    {
+        if (null === $this->_data) {
+            if (is_resource($this->data)) {
+                $this->data = stream_get_contents($this->data);
+            }
+            if ($this->data) {
+                $this->_data = unserialize($this->data);
+            }
+            else {
+                $this->_data = [];
+            }
+        }
+        return $this->_data;
+    }
+
+    public function setData($data) {
+        $this->data = serialize($data);
+    }
+
+    public function getTypeNamesPlural()
+    {
+        $typeNames = static::$typeNamesPlural;
+        $data = $this->getData();
+        return array_map(function($type) use($typeNames, $data) {
+            if ('text' === $type && isset($data['searchText'])) {
+                return sprintf('%s (%s)', $typeNames[$type], $data['searchText']);
+            }
+            return $typeNames[$type];
+        }, explode(',', $this->type));
+    }
+
+    public function getTypeNamesSingular()
+    {
+        $typeNames = static::$typeNamesSingular;
+        $data = $this->getData();
+        return array_map(function($type) use($typeNames, $data) {
+            if ('text' === $type && isset($data['searchText'])) {
+                return sprintf('%s (%s)', $typeNames[$type], $data['searchText']);
+            }
+            return $typeNames[$type];
+        }, explode(',', $this->type));
+    }
+
+    public function extraFields()
+    {
+        return ['searchResults', 'websitePage'];
     }
 }

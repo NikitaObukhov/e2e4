@@ -58,6 +58,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'rules' => [
+                'search/<id:\d+>' => 'search/view',
+                'search/<id:\d+>/results' => 'search/results',
+            ]
         ],
         'user' => [
             'identityClass' => 'app\models\User',
