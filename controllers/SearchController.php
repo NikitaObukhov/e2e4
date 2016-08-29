@@ -2,15 +2,39 @@
 
 namespace app\controllers;
 
+use app\models\bridge\RequestAwareSerializationContext;
+use app\models\bridge\RequestedFieldsAwareSerializationContext;
+use app\models\entity\SearchRequest;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
-use JMS\Serializer\SerializationContext;
-use yii\rest\ActiveController;
+use yii\data\ActiveDataProvider;
 use yii\rest\Controller;
+use yii\rest\IndexAction;
+use yii\web\NotFoundHttpException;
 use yii\web\Request;
 use yii\web\Response;
 
 class SearchController extends Controller
 {
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors() + [
+            'cors' => [
+                'class' => \yii\filters\Cors::className(),
+                'cors' => [
+                    'Origin' => ['*'],
+                    'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+                    'Access-Control-Request-Headers' => ['*'],
+                    'Access-Control-Allow-Credentials' => null,
+                    'Access-Control-Max-Age' => 86400,
+                    'Access-Control-Expose-Headers' => ['X-Pagination-Total-Count'],
+                ],
+            ]
+        ];
+        return $behaviors;
+    }
 
     /**
      * @inheritdoc
@@ -26,6 +50,23 @@ class SearchController extends Controller
                 'class' => 'yii\rest\IndexAction',
                 'modelClass' => 'app\models\entity\SearchRequest',
             ],
+            'view' => [
+                'class' => 'yii\rest\ViewAction',
+                'modelClass' => 'app\models\entity\SearchRequest',
+            ],
+            'results' => [
+                'class' => 'yii\rest\IndexAction',
+                'modelClass' => 'app\models\entity\SearchResult',
+                'prepareDataProvider' => function(IndexAction $action) {
+                    $request = \Yii::$app->request;
+                    if (null === $searchRequest = SearchRequest::findOne($request->get('id'))) {
+                        throw new NotFoundHttpException;
+                    }
+                    return new ActiveDataProvider([
+                        'query' => $searchRequest->getSearchResults(),
+                    ]);
+                },
+            ],
         ];
     }
 
@@ -35,7 +76,7 @@ class SearchController extends Controller
     protected function verbs()
     {
         return [
-            'do' => ['POST', 'GET'],
+            'do' => ['POST', 'OPTIONS'],
             'history' => ['GET', 'HEAD'],
 
         ];
@@ -43,26 +84,40 @@ class SearchController extends Controller
 
     public function actionDo()
     {
-        $form = \Yii::$container->get('e2e4.form.parse_url');
+        if (\Yii::$app->getRequest()->getMethod() === 'OPTIONS') {
+            \Yii::$app->getResponse()->getHeaders()->set('Allow', 'POST');
+            return;
+        }
 
-        $result = $form->load(\Yii::$app->request->get(), '');
+        $form = \Yii::$container->get('e2e4.form.search_request');
+
+        $result = $form->load(\Yii::$app->request->post(), '');
         if ($form->validate()) {
-            $form->submit();
+            $response = \Yii::$app->getResponse();
+            try {
+                $searchRequest = $form->submit();
+                /* @var $searchRequest SearchRequest */
+            }
+            catch (RequestException $e) {
+                $response->setStatusCode(400);
+                $context = $e->getHandlerContext();
+                return ['errors' => [$context['error']]];
+            }
+
+            return $searchRequest;
         }
         else {
-            var_dump($form->getErrors());
+            $response = \Yii::$app->getResponse();
+            $response->setStatusCode(400);
+            return $this->serializeData(['errors' => $form->getErrors()]);
         }
     }
 
-    public function actionView($id)
-    {
-        var_dump($id);die;
-    }
 
     protected function getSerializer(Request $request)
     {
         $serializer = \Yii::$container->get('e2e4.serializer');
-        $context = new SerializationContext();
+        $context = new RequestedFieldsAwareSerializationContext();
         $groups = explode(',', $request->get('expand', ''));
         $context->setGroups(array_merge($groups, [GroupsExclusionStrategy::DEFAULT_GROUP]));
         $serializer->setSerializationContext($context);
