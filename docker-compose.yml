@@ -45,7 +45,6 @@ services:
     #        - web
     #    volumes_from:
     #        - web
-
     db:
         image: postgres:latest
         ports:
@@ -56,4 +55,15 @@ services:
 
         # Autostart at boottime
         #restart: always
+
+    frontend:
+        build: ./frontend
+        volumes: 
+            - ./frontend:/projects
+        ports:
+            - "3000:3000"
+            - "3001:3001"
+        environment:
+            E2E4_BACKEND_BASE_URL: 'http://laptop:8080'
+            E2E4_BACKEND_BASE_PATH: '/'
 
