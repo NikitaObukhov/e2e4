@@ -1,0 +1,5 @@
+<div ng-messages="$ctrl.options.formControl.$error" ng-if="$ctrl.options.validation.errorExistsAndShouldBeVisible || $ctrl.form.triedToSubmit">
+    <div class="error-message" ng-message="{{::name}}" ng-repeat="(name, message) in ::$ctrl.options.validation.messages">
+        {{message($ctrl.options.formControl.$viewValue, $ctrl.options.formControl.$modelValue, this)}}
+    </div>
+</div>

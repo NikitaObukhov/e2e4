@@ -1,0 +1,11 @@
+<formly-form model="$ctrl.model" fields="$ctrl.formFields" form="$ctrl.form">
+    <formly-transclude></formly-transclude>
+    <button type="submit" class="btn btn-default" ng-click="$ctrl.form.triedToSubmit = true; $ctrl.submit($ctrl.user)">Поиск</button>
+</formly-form>
+<div ng-show="$ctrl.errors.length">
+    <div ng-repeat="err in $ctrl.errors" class="error-message">{{err}}</div>
+</div>
+<div ng-show="$ctrl.result" class="search-results">
+    <p>Результаты поиска:</p>
+    <search-history history="[]"></search-history>
+</div>

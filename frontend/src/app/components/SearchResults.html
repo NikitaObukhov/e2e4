@@ -1,0 +1,9 @@
+<p ng-if="$ctrl.searchRequest">
+    {{ $ctrl.searchRequest.getHumanReadableName() }}
+</p>
+<table ng-table="$ctrl.table" class="table table-bordered table-striped table-condensed">
+    <tr ng-repeat="row in $data">
+        <td data-title="'#'">{{((-1 + $ctrl.table.page()) * $ctrl.table.count()) + $index + 1}}</td>
+        <td data-title="$ctrl.nameOfDataColumn"><div ng-bind-html="row.getView()"></div></td>
+    </tr>
+</table>

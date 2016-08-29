@@ -1,0 +1,14 @@
+<p class="search-history">История поиска</p>
+<table ng-table="$ctrl.table" class="table table-bordered table-striped table-condensed">
+    <tr ng-repeat="row in $data">
+        <td data-title="'#'">{{row.search_request_id}}</td>
+        <td data-title="'Сайт'">{{row.website_page.website.domain}}</td>
+        <td data-title="'Дата'">{{row.created_at | toDate | date:'HH:mm dd.MM.yyyy' }}</td>
+        <td data-title="'Тип поиска'">{{row.type_names_plural.join(', ') }}</td>
+        <td data-title="'Шт.'">
+            <a ui-sref="app.searchResults({id:row.search_request_id})">
+                {{row.search_results_count }}
+            </a>
+        </td>
+    </tr>
+</table>
